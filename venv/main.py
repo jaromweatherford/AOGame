@@ -10,11 +10,7 @@ import event
 
 ava = units.Ava(25, 25)
 ava.facing = "right"
-george2 = units.George(100, 25)
-george2.speed = 0.4
-george2.facing = "left"
 graphics.register(ava)
-graphics.register(george2)
 
 def quit(e):
     global run
@@ -52,7 +48,6 @@ while run:
 
     event.update()
     ava.update()
-    george2.update()
     graphics.update()
 
 

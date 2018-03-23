@@ -15,7 +15,7 @@ class Unit(object):
 class Ava(Unit):
     def __init__(self, x, y):
         super(Ava, self).__init__(x, y)
-        self.spritesheet = graphics.load("resources\Ava.png")
+        self.spritesheet = graphics.load(r"resources\ava_small.png")
         self.rot_sprite = self.spritesheet
         self.direction = 0
         self.speed = 2
@@ -42,8 +42,7 @@ class Ava(Unit):
         if self.w:
             new_y -= self.speed * math.sin(rad)
             new_x += self.speed * math.cos(rad)
-            overlap = graphics.background_mask.overlap(ava_mask, (int(new_x), int(new_y)))
-            if overlap:
+            if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
             else:
@@ -60,8 +59,7 @@ class Ava(Unit):
         if self.s:
             new_y += self.speed * math.sin(rad)
             new_x -= self.speed * math.cos(rad)
-            overlap = graphics.background_mask.overlap(ava_mask, (int(new_x), int(new_y)))
-            if overlap:
+            if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
             else:
@@ -78,8 +76,7 @@ class Ava(Unit):
         if self.a:
             new_y -= self.speed * math.cos(rad)
             new_x -= self.speed * math.sin(rad)
-            overlap = graphics.background_mask.overlap(ava_mask, (int(new_x), int(new_y)))
-            if overlap:
+            if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
             else:
@@ -96,8 +93,7 @@ class Ava(Unit):
         if self.d:
             new_y += self.speed * math.cos(rad)
             new_x += self.speed * math.sin(rad)
-            overlap = graphics.background_mask.overlap(ava_mask, (int(self.x), int(self.y)))
-            if overlap:
+            if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
             else:
@@ -114,7 +110,6 @@ class Ava(Unit):
             while not graphics.background_mask.get_at((center_x + int(self.x), center_y + int(self.y) + bot_dist)):
                 bot_dist += 1
             print "BOTTOM: ", bot_dist
-            print "HEIGHT: ", bot_dist + top_dist
             left_dist = 0
             while not graphics.background_mask.get_at((center_x + int(self.x) - left_dist, center_y + int(self.y))):
                 left_dist += 1
@@ -123,17 +118,17 @@ class Ava(Unit):
             while not graphics.background_mask.get_at((center_x + int(self.x) + right_dist, center_y + int(self.y))):
                 right_dist += 1
             print "RIGHT: ", right_dist
-            print "WIDTH: ", left_dist + right_dist
+            print "PIXEL: ", graphics.background.get_at((int(self.x + 2), int(self.y)))
         self.x = new_x
         self.y = new_y
         if self.y < 0:
             self.y = 0
         if self.x < 0:
             self.x = 0
-        if self.y > (graphics.height - 40):
-            self.y = (graphics.height - 40)
-        if self.x > (graphics.width - 40):
-            self.x = (graphics.width - 40)
+        if self.y > (graphics.height - 1):
+            self.y = (graphics.height - 1)
+        if self.x > (graphics.width - 1):
+            self.x = (graphics.width - 1)
 
     def render(self, surface):
         orig_center = self.spritesheet.get_rect().center

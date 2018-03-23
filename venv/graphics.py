@@ -3,6 +3,11 @@ from pygame.locals import *
 
 pygame.display.init()
 
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
 width = 640
 height = 400
 
@@ -13,6 +18,7 @@ renderables = []
 screen = None
 background_mask = None
 background = None
+pixel_array = None
 
 def update():
     global screen, background, renderables, width, height
@@ -40,11 +46,12 @@ def remove(renderable):
 
 
 def init():
-    global screen, background, background_mask
-    background = load("resources\\room03-1.png")
+    global screen, background, background_mask, pixel_array
+    background = load(r"resources\room02.png")
     pygame.display.init()
     screen = pygame.display.set_mode((width, height))
     background_mask = pygame.mask.from_surface(background.convert_alpha())
+    pixel_array = pygame.PixelArray(background.copy())
 
 
 def load(file):
