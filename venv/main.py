@@ -1,12 +1,15 @@
 import pygame
 
 import graphics
+import audio
 import units
 
 graphics.init()
 
 
 import event
+
+audio.init()
 
 ava = units.Ava(25, 25)
 ava.facing = "right"

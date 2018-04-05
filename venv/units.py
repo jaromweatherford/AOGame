@@ -3,6 +3,7 @@ import math
 import pygame
 
 import graphics
+import audio
 
 
 class Unit(object):
@@ -18,7 +19,9 @@ class Ava(Unit):
         self.spritesheet = graphics.load(r"resources\ava_small.png")
         self.rot_sprite = self.spritesheet
         self.direction = 0
-        self.speed = 2
+        self.speed = 1
+        self.moving = False
+        self.blocked = False
         self.w = False
         self.a = False
         self.s = False
@@ -26,7 +29,9 @@ class Ava(Unit):
         self.left = False
         self.right = False
         self.space = False
+        self.new_space = True
         self.sensitivity = 5
+        self.step_counter = 0
 
     def update(self):
         rad = math.radians(self.direction)
@@ -35,17 +40,30 @@ class Ava(Unit):
         old_y = self.y
         new_x = old_x
         new_y = old_y
-        if self.left:
+        distances = [0, 0, 0, 0]
+        while not graphics.background_mask.get_at((int(self.x), int(self.y) - distances[1])):
+            distances[1] += 1
+        while not graphics.background_mask.get_at((int(self.x), int(self.y) + distances[3])):
+            distances[3] += 1
+        while not graphics.background_mask.get_at((int(self.x) - distances[2], int(self.y))):
+            distances[2] += 1
+        while not graphics.background_mask.get_at((int(self.x) + distances[0], int(self.y))):
+            distances[0] += 1
+        """if self.left:
             self.direction += self.sensitivity
         if self.right:
-            self.direction -= self.sensitivity
+            self.direction -= self.sensitivity"""
         if self.w:
             new_y -= self.speed * math.sin(rad)
             new_x += self.speed * math.cos(rad)
             if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
+                if not self.blocked:
+                    audio.play_thump()
+                    self.blocked = True
             else:
+                self.moving = True
                 old_x = new_x
                 old_y = new_y
                 if self.y < 0:
@@ -62,7 +80,11 @@ class Ava(Unit):
             if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
+                if not self.blocked:
+                    audio.play_thump()
+                    self.blocked = True
             else:
+                self.moving = True
                 old_x = new_x
                 old_y = new_y
                 if self.y < 0:
@@ -79,7 +101,11 @@ class Ava(Unit):
             if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
+                if not self.blocked:
+                    audio.play_thump()
+                    self.blocked = True
             else:
+                self.moving = True
                 old_x = new_x
                 old_y = new_y
                 if self.y < 0:
@@ -96,29 +122,40 @@ class Ava(Unit):
             if graphics.background.get_at((int(new_x), int(new_y)))[3] != 0:
                 new_x = old_x
                 new_y = old_y
+                if not self.blocked:
+                    audio.play_thump()
+                    self.blocked = True
             else:
+                self.moving = True
                 old_x = new_x
                 old_y = new_y
-        if self.space:
-            center_x = self.spritesheet.get_rect().center[1]
-            center_y = self.spritesheet.get_rect().center[0]
-            top_dist = 0
-            while not graphics.background_mask.get_at((center_x + int(self.x), center_y + int(self.y) - top_dist)):
-                top_dist += 1
-            print "TOP: ", top_dist
-            bot_dist = 0
-            while not graphics.background_mask.get_at((center_x + int(self.x), center_y + int(self.y) + bot_dist)):
-                bot_dist += 1
-            print "BOTTOM: ", bot_dist
-            left_dist = 0
-            while not graphics.background_mask.get_at((center_x + int(self.x) - left_dist, center_y + int(self.y))):
-                left_dist += 1
-            print "LEFT: ", left_dist
-            right_dist = 0
-            while not graphics.background_mask.get_at((center_x + int(self.x) + right_dist, center_y + int(self.y))):
-                right_dist += 1
-            print "RIGHT: ", right_dist
-            print "PIXEL: ", graphics.background.get_at((int(self.x + 2), int(self.y)))
+        if self.moving or self.space:
+            if self.moving:
+                self.step_counter += 1
+                self.blocked = False
+            if (self.step_counter > 20 or self.space):
+                self.step_counter = 0
+                left_side = 0
+                right_side = 0
+                norm_dir = abs(self.direction % 360)
+                if norm_dir < 45 or norm_dir > 315:
+                    left_side = distances[1]
+                    right_side = distances[3]
+                    print "facing right"
+                elif norm_dir < 135:
+                    left_side = distances[2]
+                    right_side = distances[0]
+                    print "facing up"
+                elif norm_dir < 225:
+                    left_side = distances[3]
+                    right_side = distances[1]
+                    print "facing left"
+                else:
+                    left_side = distances[0]
+                    right_side = distances[2]
+                    print "facing down"
+                audio.play_echo(left_side, right_side)
+            self.space = False
         self.x = new_x
         self.y = new_y
         if self.y < 0:
@@ -129,6 +166,7 @@ class Ava(Unit):
             self.y = (graphics.height - 1)
         if self.x > (graphics.width - 1):
             self.x = (graphics.width - 1)
+        self.moving = False
 
     def render(self, surface):
         orig_center = self.spritesheet.get_rect().center
@@ -152,7 +190,10 @@ class Ava(Unit):
             elif event.key == pygame.K_RIGHT:
                 self.right = True
             elif event.key == pygame.K_SPACE:
-                self.space = True
+                print self.new_space
+                if self.new_space == True:
+                    self.space = True
+                    self.new_space = False
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self.w = False
@@ -164,10 +205,13 @@ class Ava(Unit):
                 self.d = False
             elif event.key == pygame.K_LEFT:
                 self.left = False
+                self.direction += 90
             elif event.key == pygame.K_RIGHT:
                 self.right = False
+                self.direction -= 90
             elif event.key == pygame.K_SPACE:
                 self.space = False
+                self.new_space = True
 
 
 

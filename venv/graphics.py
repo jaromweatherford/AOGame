@@ -47,7 +47,7 @@ def remove(renderable):
 
 def init():
     global screen, background, background_mask, pixel_array
-    background = load(r"resources\room02.png")
+    background = load(r"resources\room04.png")
     pygame.display.init()
     screen = pygame.display.set_mode((width, height))
     background_mask = pygame.mask.from_surface(background.convert_alpha())
