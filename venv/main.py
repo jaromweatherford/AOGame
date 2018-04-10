@@ -15,18 +15,23 @@ ava = units.Ava(25, 25)
 ava.facing = "right"
 graphics.register(ava)
 
-def quit(e):
-    global run
+cover = True
+
+def handle(e):
+    global run, cover, step
     if e.type == pygame.QUIT:
         run = False
     elif e.type == pygame.KEYUP:
         if ((e.key == pygame.K_F4) and
                 (e.mod and pygame.KMOD_ALT)):
             run = False
+        elif e.key == pygame.K_b:
+            cover = not cover
+            print "cover: ", cover
 
 
 event.register(ava.handler)
-event.register(quit)
+event.register(handle)
 
 clock = pygame.time.Clock()
 run = True
@@ -51,7 +56,9 @@ while run:
 
     event.update()
     ava.update()
-    graphics.update()
+    graphics.update(cover)
+
+
 
 
 pygame.display.quit()

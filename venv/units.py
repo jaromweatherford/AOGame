@@ -32,6 +32,7 @@ class Ava(Unit):
         self.new_space = True
         self.sensitivity = 5
         self.step_counter = 0
+        self.snap_sound = True
 
     def update(self):
         rad = math.radians(self.direction)
@@ -154,7 +155,10 @@ class Ava(Unit):
                     left_side = distances[0]
                     right_side = distances[2]
                     print "facing down"
-                audio.play_echo(left_side, right_side)
+                if self.snap_sound:
+                    audio.play_echo(left_side, right_side)
+                else:
+                    audio.play_step(left_side, right_side)
             self.space = False
         self.x = new_x
         self.y = new_y
@@ -212,6 +216,9 @@ class Ava(Unit):
             elif event.key == pygame.K_SPACE:
                 self.space = False
                 self.new_space = True
+            elif event.key == pygame.K_v:
+                self.snap_sound = not self.snap_sound
+                print "snap_sound: ", self.snap_sound
 
 
 

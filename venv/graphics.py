@@ -15,21 +15,23 @@ assets = {}
 
 renderables = []
 
+picture = None
 screen = None
 background_mask = None
 background = None
 pixel_array = None
 
-def update():
-    global screen, background, renderables, width, height
-
+def update(cover):
+    global screen, background, renderables, picture, width, height
 
     screen.fill((0, 0, 0))
-    if background:
-        screen.blit(background, (0, 0))
-    for r in renderables:
-        r.render(screen)
-
+    if not cover:
+        if background:
+            screen.blit(background, (0, 0))
+        for r in renderables:
+            r.render(screen)
+    else:
+        screen.blit(picture, (0, 0))
     pygame.display.flip()
 
 
@@ -46,12 +48,18 @@ def remove(renderable):
 
 
 def init():
-    global screen, background, background_mask, pixel_array
+    global screen, background, background_mask, pixel_array, picture
     background = load(r"resources\room04.png")
+    picture = load(r"resources\jao1.png")
     pygame.display.init()
     screen = pygame.display.set_mode((width, height))
     background_mask = pygame.mask.from_surface(background.convert_alpha())
     pixel_array = pygame.PixelArray(background.copy())
+
+
+def cover():
+    global picture
+    screen.blit(picture, (0, 0))
 
 
 def load(file):
