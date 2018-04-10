@@ -15,10 +15,11 @@ ava = units.Ava(25, 25)
 ava.facing = "right"
 graphics.register(ava)
 
+run = True
 cover = True
 
 def handle(e):
-    global run, cover, step
+    global run, cover
     if e.type == pygame.QUIT:
         run = False
     elif e.type == pygame.KEYUP:
@@ -34,7 +35,6 @@ event.register(ava.handler)
 event.register(handle)
 
 clock = pygame.time.Clock()
-run = True
 frame = 0
 while run:
     clock.tick(30)
