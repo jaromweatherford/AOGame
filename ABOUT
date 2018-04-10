@@ -1,0 +1,8 @@
+This was developed in PyCharm, so all the dependencies are included in the file.  The python files that we wrote are
+directly in the venv folder, and the resources are (creatively) in the resources folder under venv.
+
+Controls for the game:
+Use WASD to move forward, left, back, and right respectively, and the left and right arrow keys turn you left and right.
+The sounds you hear are echos of your footsteps off the walls to your left and right to help you know where you are.  You
+can also stomp your foot by pressing space.  If you can't tell where you are, you can toggle the map with "b".  You can
+also toggle the footstep sound effect with "v".  There is no victory condition so far.
